@@ -5,14 +5,17 @@
               android:layout_height="fill_parent"
         >
     <TextView
+            android:id="@id/balanceView"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Hello World, SaldoActivity"
-            android:textAlignment="center" android:textSize="30dp" android:id="@id/balanceView"/>
+            android:gravity="center"
+            android:textSize="30sp"
+            />
     <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/update_balance_button"
-            android:id="@+id/refreshBalanceButton" android:layout_gravity="center_horizontal"/>
+            android:id="@+id/refreshBalanceButton"
+            android:layout_gravity="center_horizontal"/>
 </LinearLayout>
 
