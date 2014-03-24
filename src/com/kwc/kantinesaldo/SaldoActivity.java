@@ -14,13 +14,12 @@ public class SaldoActivity extends Activity {
     private static final String CARD_PIN = "card_pin";
     private TextView balanceView;
     private Button updateButton;
-    String cardNumber;
-    String pin;
+    private SharedPreferences prefs;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+        prefs = getPreferences(MODE_PRIVATE);
         setContentView(R.layout.main);
 
         balanceView = (TextView) findViewById(R.id.balanceView);
@@ -29,18 +28,23 @@ public class SaldoActivity extends Activity {
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                cardNumber = prefs.getString(CARD_NUMBER, null);
-                pin = prefs.getString(CARD_PIN, null);
-                HttpGetBalance httpGetBalance = new HttpGetBalance(getApplicationContext(), prefs.getString(CARD_NUMBER, null), prefs.getString(CARD_PIN, null)) {
+                String cardNumber = getCardNumber();
+                String pin = getPin();
 
-                    @Override
-                    public void onResult(String balance) {
-                        balanceView.setText(balance);
-                        updateButton.setEnabled(true);
-                    }
-                };
-                httpGetBalance.execute();
-                updateButton.setEnabled(false);
+                if (cardNumber != null && !cardNumber.isEmpty() || pin != null && !pin.isEmpty()) {
+                    HttpGetBalance httpGetBalance = new HttpGetBalance(getApplicationContext(), cardNumber, pin) {
+
+                        @Override
+                        public void onResult(String balance) {
+                            balanceView.setText(balance);
+                            updateButton.setEnabled(true);
+                        }
+                    };
+                    httpGetBalance.execute();
+                    updateButton.setEnabled(false);
+                } else {
+                    showCardInfoDialog();
+                }
             }
         });
 
@@ -48,20 +52,31 @@ public class SaldoActivity extends Activity {
         updateCardInfoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CardInfoDialogFragment cardInfoDialogFragment = new CardInfoDialogFragment(prefs.getString(CARD_NUMBER, null), prefs.getString(CARD_PIN, null)) {
-
-                    @Override
-                    protected void saveCardInfo(String cardNumber, String pin) {
-                        SharedPreferences.Editor editor = prefs.edit();
-                        editor.putString(CARD_NUMBER, cardNumber);
-                        editor.putString(CARD_PIN, pin);
-                        editor.commit();
-                    }
-                };
-                cardInfoDialogFragment.show(getFragmentManager(), TAG);
-
+                showCardInfoDialog();
             }
         });
+    }
+
+    private void showCardInfoDialog() {
+        CardInfoDialogFragment cardInfoDialogFragment = new CardInfoDialogFragment(getCardNumber(), getPin()) {
+
+            @Override
+            protected void saveCardInfo(String cardNumber, String pin) {
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString(CARD_NUMBER, cardNumber);
+                editor.putString(CARD_PIN, pin);
+                editor.commit();
+            }
+        };
+        cardInfoDialogFragment.show(getFragmentManager(), TAG);
+    }
+
+    private String getPin() {
+        return prefs.getString(CARD_PIN, null);
+    }
+
+    private String getCardNumber() {
+        return prefs.getString(CARD_NUMBER, null);
     }
 
 }
