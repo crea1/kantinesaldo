@@ -2,4 +2,6 @@
 <resources>
     <string name="app_name">kantinesaldo</string>
     <string name="update_balance_button">Oppdater</string>
+    <string name="ok">Lagre</string>
+    <string name="cancel">Avbryt</string>
 </resources>
