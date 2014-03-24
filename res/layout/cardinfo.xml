@@ -9,12 +9,15 @@
             android:id="@+id/cardNumberEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="number"
+            android:hint="@string/card_number"
             android:layout_gravity="center_horizontal"/>
     <EditText
             android:id="@+id/pinEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="numberPassword"
+            android:hint="@string/pin"
             android:ems="10"
             android:layout_gravity="center_horizontal"/>
 </LinearLayout>

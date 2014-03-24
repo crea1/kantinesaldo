@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">kantinesaldo</string>
+    <string name="app_name">Kantinesaldo</string>
     <string name="update_balance_button">Oppdater</string>
     <string name="update_card_info_button">Kortinfo</string>
     <string name="ok">Lagre</string>
     <string name="cancel">Avbryt</string>
+    <string name="card_number">Kortnummer</string>
+    <string name="pin">Pin</string>
 </resources>
