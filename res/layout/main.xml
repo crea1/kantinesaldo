@@ -12,16 +12,18 @@
             android:textSize="30sp"
             />
     <Button
-            android:layout_width="wrap_content"
+            android:id="@+id/refreshBalanceButton"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/update_balance_button"
-            android:id="@+id/refreshBalanceButton"
+            android:drawableLeft="@android:drawable/ic_popup_sync"
             android:layout_gravity="center_horizontal"/>
     <Button
             android:id="@+id/updateCardInfoButton"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/update_card_info_button"
+            android:drawableLeft="@android:drawable/ic_menu_preferences"
             android:layout_gravity="center_horizontal"/>
 </LinearLayout>
 
