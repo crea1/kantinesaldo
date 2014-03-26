@@ -3,6 +3,9 @@ package com.kwc.kantinesaldo;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -47,14 +50,6 @@ public class SaldoActivity extends Activity {
                 }
             }
         });
-
-        Button updateCardInfoButton = (Button) findViewById(R.id.updateCardInfoButton);
-        updateCardInfoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showCardInfoDialog();
-            }
-        });
     }
 
     private void showCardInfoDialog() {
@@ -69,6 +64,21 @@ public class SaldoActivity extends Activity {
             }
         };
         cardInfoDialogFragment.show(getFragmentManager(), TAG);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.mainmenu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_settings) {
+            showCardInfoDialog();
+        }
+        return true;
     }
 
     private String getPin() {

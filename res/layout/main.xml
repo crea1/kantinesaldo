@@ -9,21 +9,15 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textSize="30sp"
+            android:textSize="48sp"
+            android:paddingBottom="48sp"
             />
     <Button
             android:id="@+id/refreshBalanceButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/update_balance_button"
-            android:drawableLeft="@android:drawable/ic_popup_sync"
-            android:layout_gravity="center_horizontal"/>
-    <Button
-            android:id="@+id/updateCardInfoButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/update_card_info_button"
-            android:drawableLeft="@android:drawable/ic_menu_preferences"
+            android:drawableTop="@android:drawable/ic_popup_sync"
             android:layout_gravity="center_horizontal"/>
 </LinearLayout>
 
