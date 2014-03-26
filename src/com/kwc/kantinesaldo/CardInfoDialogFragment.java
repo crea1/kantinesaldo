@@ -21,6 +21,7 @@ public abstract class CardInfoDialogFragment extends DialogFragment {
         super();
         this.cardNumber = cardNumber;
         this.pin = pin;
+        setRetainInstance(true);
     }
 
     @Override
@@ -52,6 +53,8 @@ public abstract class CardInfoDialogFragment extends DialogFragment {
 
         return builder.create();
     }
+
+
 
     protected abstract void saveCardInfo(String cardNumber, String pin);
 }
