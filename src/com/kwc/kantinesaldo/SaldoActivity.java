@@ -15,9 +15,11 @@ public class SaldoActivity extends Activity {
     private static final String TAG = "kantinesaldo";
     private static final String CARD_NUMBER = "card_number";
     private static final String CARD_PIN = "card_pin";
+    private static final String STATE_BALANCE = "balance";
     private TextView balanceView;
     private Button updateButton;
     private SharedPreferences prefs;
+    private String balance;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -26,6 +28,7 @@ public class SaldoActivity extends Activity {
         setContentView(R.layout.main);
 
         balanceView = (TextView) findViewById(R.id.balanceView);
+
 
         updateButton = (Button) findViewById(R.id.refreshBalanceButton);
         updateButton.setOnClickListener(new View.OnClickListener() {
@@ -39,6 +42,7 @@ public class SaldoActivity extends Activity {
 
                         @Override
                         public void onResult(String balance) {
+                            SaldoActivity.this.balance = balance;
                             balanceView.setText(balance);
                             updateButton.setEnabled(true);
                         }
@@ -66,6 +70,8 @@ public class SaldoActivity extends Activity {
         cardInfoDialogFragment.show(getFragmentManager(), TAG);
     }
 
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -79,6 +85,28 @@ public class SaldoActivity extends Activity {
             showCardInfoDialog();
         }
         return true;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(STATE_BALANCE, balance);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState != null) {
+            this.balance = savedInstanceState.getString(STATE_BALANCE);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (balance != null) {
+            balanceView.setText(balance);
+        }
     }
 
     private String getPin() {
