@@ -13,8 +13,9 @@ import android.widget.TextView;
 public class SaldoActivity extends Activity {
 
     private static final String TAG = "kantinesaldo";
-    private static final String CARD_NUMBER = "card_number";
-    private static final String CARD_PIN = "card_pin";
+    private static final String PREF_CARD_NUMBER = "card_number";
+    private static final String PREF_CARD_PIN = "card_pin";
+    private static final String PREF_BALANCE = "balance";
     private static final String STATE_BALANCE = "balance";
     private static final String STATE_CARDINFO_SHOWING = "cardinfo_showing";
     private TextView balanceView;
@@ -30,14 +31,15 @@ public class SaldoActivity extends Activity {
         setContentView(R.layout.main);
 
         balanceView = (TextView) findViewById(R.id.balanceView);
+        balanceView.setText(getSavedBalance());
 
 
         updateButton = (Button) findViewById(R.id.refreshBalanceButton);
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String cardNumber = getCardNumber();
-                String pin = getPin();
+                String cardNumber = getSavedCardNumber();
+                String pin = getSavedPin();
 
                 if (cardNumber != null && !cardNumber.isEmpty() || pin != null && !pin.isEmpty()) {
                     HttpGetBalance httpGetBalance = new HttpGetBalance(getApplicationContext(), cardNumber, pin) {
@@ -45,6 +47,7 @@ public class SaldoActivity extends Activity {
                         @Override
                         public void onResult(String balance) {
                             SaldoActivity.this.balance = balance;
+                            savePreference(PREF_BALANCE, balance);
                             balanceView.setText(balance);
                             updateButton.setEnabled(true);
                         }
@@ -59,14 +62,12 @@ public class SaldoActivity extends Activity {
     }
 
     private void showCardInfoDialog() {
-        cardInfoDialogFragment = new CardInfoDialogFragment(getCardNumber(), getPin()) {
+        cardInfoDialogFragment = new CardInfoDialogFragment(getSavedCardNumber(), getSavedPin()) {
 
             @Override
             protected void saveCardInfo(String cardNumber, String pin) {
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putString(CARD_NUMBER, cardNumber);
-                editor.putString(CARD_PIN, pin);
-                editor.commit();
+                savePreference(PREF_CARD_NUMBER, cardNumber);
+                savePreference(PREF_CARD_PIN, pin);
             }
         };
         cardInfoDialogFragment.show(getFragmentManager(), TAG);
@@ -120,12 +121,22 @@ public class SaldoActivity extends Activity {
         }
     }
 
-    private String getPin() {
-        return prefs.getString(CARD_PIN, null);
+    private void savePreference(String key, String value) {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(key, value);
+        editor.commit();
     }
 
-    private String getCardNumber() {
-        return prefs.getString(CARD_NUMBER, null);
+    private String getSavedPin() {
+        return prefs.getString(PREF_CARD_PIN, null);
+    }
+
+    private String getSavedCardNumber() {
+        return prefs.getString(PREF_CARD_NUMBER, null);
+    }
+
+    private String getSavedBalance() {
+        return prefs.getString(PREF_BALANCE, null);
     }
 
 }
