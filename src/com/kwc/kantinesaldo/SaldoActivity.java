@@ -21,13 +21,11 @@ public class SaldoActivity extends Activity {
     private static final String PREF_CARD_PIN = "card_pin";
     private static final String PREF_BALANCE = "balance";
     private static final String PREF_BALANCE_DATE = "balance_date";
-    private static final String STATE_BALANCE = "balance";
     private static final String STATE_CARDINFO_SHOWING = "cardinfo_showing";
     private TextView balanceView;
     private TextView dateTimeView;
     private Button updateButton;
     private SharedPreferences prefs;
-    private String balance;
     private CardInfoDialogFragment cardInfoDialogFragment;
 
     @Override
@@ -54,8 +52,6 @@ public class SaldoActivity extends Activity {
 
                         @Override
                         public void onResult(String balance) {
-                            SaldoActivity.this.balance = balance;
-
                             DateFormat balanceDate = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, Locale.UK);
                             String balanceDates = balanceDate.format(new Date());
 
@@ -108,8 +104,6 @@ public class SaldoActivity extends Activity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putString(STATE_BALANCE, balance);
-
         if (cardInfoDialogFragment != null && cardInfoDialogFragment.getDialog() != null) {
             outState.putBoolean(STATE_CARDINFO_SHOWING, true);
         } else {
@@ -122,7 +116,6 @@ public class SaldoActivity extends Activity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null) {
-            this.balance = savedInstanceState.getString(STATE_BALANCE);
             if (savedInstanceState.getBoolean(STATE_CARDINFO_SHOWING)) {
                 showCardInfoDialog();
             }
@@ -132,9 +125,8 @@ public class SaldoActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (balance != null) {
-            balanceView.setText(balance);
-        }
+        balanceView.setText(getSavedBalance());
+        dateTimeView.setText(getSavedBalanceDate());
     }
 
     private void savePreference(String key, String value) {
