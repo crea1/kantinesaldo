@@ -16,10 +16,12 @@ public class SaldoActivity extends Activity {
     private static final String CARD_NUMBER = "card_number";
     private static final String CARD_PIN = "card_pin";
     private static final String STATE_BALANCE = "balance";
+    private static final String STATE_CARDINFO_SHOWING = "cardinfo_showing";
     private TextView balanceView;
     private Button updateButton;
     private SharedPreferences prefs;
     private String balance;
+    private CardInfoDialogFragment cardInfoDialogFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,7 +59,7 @@ public class SaldoActivity extends Activity {
     }
 
     private void showCardInfoDialog() {
-        CardInfoDialogFragment cardInfoDialogFragment = new CardInfoDialogFragment(getCardNumber(), getPin()) {
+        cardInfoDialogFragment = new CardInfoDialogFragment(getCardNumber(), getPin()) {
 
             @Override
             protected void saveCardInfo(String cardNumber, String pin) {
@@ -90,6 +92,12 @@ public class SaldoActivity extends Activity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putString(STATE_BALANCE, balance);
+
+        if (cardInfoDialogFragment != null && cardInfoDialogFragment.getDialog() != null) {
+            outState.putBoolean(STATE_CARDINFO_SHOWING, true);
+        } else {
+            outState.putBoolean(STATE_CARDINFO_SHOWING, false);
+        }
         super.onSaveInstanceState(outState);
     }
 
@@ -98,6 +106,9 @@ public class SaldoActivity extends Activity {
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null) {
             this.balance = savedInstanceState.getString(STATE_BALANCE);
+            if (savedInstanceState.getBoolean(STATE_CARDINFO_SHOWING)) {
+                showCardInfoDialog();
+            }
         }
     }
 
