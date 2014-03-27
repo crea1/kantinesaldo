@@ -10,15 +10,21 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class SaldoActivity extends Activity {
 
     private static final String TAG = "kantinesaldo";
     private static final String PREF_CARD_NUMBER = "card_number";
     private static final String PREF_CARD_PIN = "card_pin";
     private static final String PREF_BALANCE = "balance";
+    private static final String PREF_BALANCE_DATE = "balance_date";
     private static final String STATE_BALANCE = "balance";
     private static final String STATE_CARDINFO_SHOWING = "cardinfo_showing";
     private TextView balanceView;
+    private TextView dateTimeView;
     private Button updateButton;
     private SharedPreferences prefs;
     private String balance;
@@ -30,6 +36,8 @@ public class SaldoActivity extends Activity {
         prefs = getPreferences(MODE_PRIVATE);
         setContentView(R.layout.main);
 
+        dateTimeView = (TextView) findViewById(R.id.dateTimeView);
+        dateTimeView.setText(getSavedBalanceDate());
         balanceView = (TextView) findViewById(R.id.balanceView);
         balanceView.setText(getSavedBalance());
 
@@ -47,8 +55,16 @@ public class SaldoActivity extends Activity {
                         @Override
                         public void onResult(String balance) {
                             SaldoActivity.this.balance = balance;
-                            savePreference(PREF_BALANCE, balance);
+
+                            DateFormat balanceDate = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, Locale.UK);
+                            String balanceDates = balanceDate.format(new Date());
+
+                            dateTimeView.setText(balanceDates);
                             balanceView.setText(balance);
+
+                            savePreference(PREF_BALANCE, balance);
+                            savePreference(PREF_BALANCE_DATE, balanceDates);
+
                             updateButton.setEnabled(true);
                         }
                     };
@@ -137,6 +153,10 @@ public class SaldoActivity extends Activity {
 
     private String getSavedBalance() {
         return prefs.getString(PREF_BALANCE, null);
+    }
+
+    private String getSavedBalanceDate() {
+        return prefs.getString(PREF_BALANCE_DATE, null);
     }
 
 }
