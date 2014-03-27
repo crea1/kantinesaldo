@@ -52,14 +52,16 @@ public class SaldoActivity extends Activity {
 
                         @Override
                         public void onResult(String balance) {
-                            DateFormat balanceDate = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, Locale.UK);
-                            String balanceDates = balanceDate.format(new Date());
+                            if (balance != null) {
+                                DateFormat balanceDate = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, Locale.UK);
+                                String balanceDates = balanceDate.format(new Date());
 
-                            dateTimeView.setText(balanceDates);
-                            balanceView.setText(balance);
+                                dateTimeView.setText(balanceDates);
+                                balanceView.setText(balance);
 
-                            savePreference(PREF_BALANCE, balance);
-                            savePreference(PREF_BALANCE_DATE, balanceDates);
+                                savePreference(PREF_BALANCE, balance);
+                                savePreference(PREF_BALANCE_DATE, balanceDates);
+                            }
 
                             updateButton.setEnabled(true);
                         }

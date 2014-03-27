@@ -61,7 +61,10 @@ public abstract class HttpGetBalance extends AsyncTask<Void, Void, String> {
 
     @Override
     protected void onPostExecute(String html) {
-        if (pinIsIncorrect(html)) {
+        if (html == null) {
+            Toast.makeText(context, "Feil ved henting av saldo", Toast.LENGTH_LONG).show();
+            onResult(null);
+        } else if (pinIsIncorrect(html)) {
             Toast.makeText(context, "Feil pinkode", Toast.LENGTH_LONG).show();
             onResult(null);
         } else if (cardnumberIsIncorrect(html)) {
