@@ -7,4 +7,5 @@
     <string name="cancel">Avbryt</string>
     <string name="card_number">Kortnummer</string>
     <string name="pin">Pin</string>
+    <string name="datetime_text">Din saldo ble hentet</string>
 </resources>
