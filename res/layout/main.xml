@@ -13,19 +13,21 @@
             android:gravity="center"
             android:textSize="72sp"
             />
-    <TextView
-            android:id="@+id/text"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/datetime_text"
-            />
-    <TextView
-            android:id="@+id/dateTimeView"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            />
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:orientation="horizontal"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:gravity="center"
+
+            >
+        <TextView
+                android:id="@+id/dateText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/datetime_text"
+                />
+        </LinearLayout>
     <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="0dip"

@@ -34,8 +34,8 @@ public class SaldoActivity extends Activity {
         prefs = getPreferences(MODE_PRIVATE);
         setContentView(R.layout.main);
 
-        dateTimeView = (TextView) findViewById(R.id.dateTimeView);
-        dateTimeView.setText(getSavedBalanceDate());
+        dateTimeView = (TextView) findViewById(R.id.dateText);
+        dateTimeView.setText(getResources().getString(R.string.datetime_text, getSavedBalanceDate()));
         balanceView = (TextView) findViewById(R.id.balanceView);
         balanceView.setText(getSavedBalance());
 
@@ -56,7 +56,7 @@ public class SaldoActivity extends Activity {
                                 DateFormat balanceDate = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, Locale.UK);
                                 String balanceDates = balanceDate.format(new Date());
 
-                                dateTimeView.setText(balanceDates);
+                                dateTimeView.setText(getResources().getString(R.string.datetime_text, balanceDates));
                                 balanceView.setText(balance);
 
                                 savePreference(PREF_BALANCE, balance);
@@ -128,7 +128,7 @@ public class SaldoActivity extends Activity {
     protected void onResume() {
         super.onResume();
         balanceView.setText(getSavedBalance());
-        dateTimeView.setText(getSavedBalanceDate());
+        dateTimeView.setText(getResources().getString(R.string.datetime_text, getSavedBalanceDate()));
     }
 
     private void savePreference(String key, String value) {
