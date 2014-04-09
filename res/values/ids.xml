@@ -1,3 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<item name="balanceView" type="id"/></resources>
+<item name="balanceView" type="id"/>
+    <item name="prevBalanceView" type="id"/>
+</resources>

@@ -21,9 +21,13 @@ public class SaldoActivity extends Activity {
     private static final String PREF_CARD_PIN = "card_pin";
     private static final String PREF_BALANCE = "balance";
     private static final String PREF_BALANCE_DATE = "balance_date";
+    private static final String PREF_PREV_BALANCE = "prev_balance";
+    private static final String PREF_PREV_BALANCE_DATE = "prev_balance_date";
     private static final String STATE_CARDINFO_SHOWING = "cardinfo_showing";
     private TextView balanceView;
     private TextView dateTimeView;
+    private TextView prevBalanceView;
+    private TextView prevDateTimeView;
     private Button updateButton;
     private SharedPreferences prefs;
     private CardInfoDialogFragment cardInfoDialogFragment;
@@ -34,10 +38,10 @@ public class SaldoActivity extends Activity {
         prefs = getPreferences(MODE_PRIVATE);
         setContentView(R.layout.main);
 
-        dateTimeView = (TextView) findViewById(R.id.dateText);
-        dateTimeView.setText(getResources().getString(R.string.datetime_text, getSavedBalanceDate()));
         balanceView = (TextView) findViewById(R.id.balanceView);
-        balanceView.setText(getSavedBalance());
+        dateTimeView = (TextView) findViewById(R.id.dateText);
+        prevBalanceView = (TextView) findViewById(R.id.prevBalanceView);
+        prevDateTimeView = (TextView) findViewById(R.id.prevDateText);
 
 
         updateButton = (Button) findViewById(R.id.refreshBalanceButton);
@@ -57,10 +61,16 @@ public class SaldoActivity extends Activity {
                                 String balanceDates = balanceDate.format(new Date());
 
                                 dateTimeView.setText(getResources().getString(R.string.datetime_text, balanceDates));
-                                balanceView.setText(balance);
 
-                                savePreference(PREF_BALANCE, balance);
-                                savePreference(PREF_BALANCE_DATE, balanceDates);
+                                if (!balance.equals(getSavedBalance())) {
+                                    prevBalanceView.setText(getSavedBalance());
+                                    balanceView.setText(balance);
+                                    savePreference(PREF_PREV_BALANCE, getSavedBalance());
+                                    savePreference(PREF_PREV_BALANCE_DATE, getSavedBalanceDate());
+                                    savePreference(PREF_BALANCE, balance);
+                                    savePreference(PREF_BALANCE_DATE, balanceDates);
+                                }
+
                             }
 
                             updateButton.setEnabled(true);
@@ -128,7 +138,13 @@ public class SaldoActivity extends Activity {
     protected void onResume() {
         super.onResume();
         balanceView.setText(getSavedBalance());
-        dateTimeView.setText(getResources().getString(R.string.datetime_text, getSavedBalanceDate()));
+        if (getSavedBalanceDate() != null) {
+            dateTimeView.setText(getResources().getString(R.string.datetime_text, getSavedBalanceDate()));
+        }
+        if (getSavedPrevBalance() != null) {
+            prevBalanceView.setText(getSavedPrevBalance());
+            prevDateTimeView.setText(getResources().getString(R.string.datetime_text, getSavedPrevBalanceDate()));
+        }
     }
 
     private void savePreference(String key, String value) {
@@ -153,4 +169,11 @@ public class SaldoActivity extends Activity {
         return prefs.getString(PREF_BALANCE_DATE, null);
     }
 
+    private String getSavedPrevBalance() {
+        return prefs.getString(PREF_PREV_BALANCE, null);
+    }
+
+    private String getSavedPrevBalanceDate() {
+        return prefs.getString(PREF_PREV_BALANCE_DATE, null);
+    }
 }
