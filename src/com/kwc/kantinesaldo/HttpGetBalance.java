@@ -89,7 +89,7 @@ public abstract class HttpGetBalance extends AsyncTask<Void, Void, String> {
     }
 
     private boolean pinIsIncorrect(String html) {
-        return html.contains("The PIN you entered is incorrect.");
+        return html.contains("The PIN you entered is incorrect.")  || html.contains("Please enter your PIN");
     }
 
     private boolean cardnumberIsIncorrect(String html) {

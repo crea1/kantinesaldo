@@ -51,7 +51,7 @@ public class SaldoActivity extends Activity {
                 String cardNumber = getSavedCardNumber();
                 String pin = getSavedPin();
 
-                if (cardNumber != null && !cardNumber.isEmpty() || pin != null && !pin.isEmpty()) {
+                if (cardNumber != null && !cardNumber.isEmpty() && pin != null && !pin.isEmpty()) {
                     HttpGetBalance httpGetBalance = new HttpGetBalance(getApplicationContext(), cardNumber, pin) {
 
                         @Override
