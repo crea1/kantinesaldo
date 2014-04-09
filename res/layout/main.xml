@@ -20,6 +20,13 @@
             android:gravity="center"
             />
     <TextView
+            android:id="@+id/diff"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="48sp"
+            />
+    <TextView
             android:id="@id/prevBalanceView"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

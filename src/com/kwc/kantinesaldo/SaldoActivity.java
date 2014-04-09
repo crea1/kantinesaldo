@@ -28,6 +28,7 @@ public class SaldoActivity extends Activity {
     private TextView dateTimeView;
     private TextView prevBalanceView;
     private TextView prevDateTimeView;
+    private TextView diffView;
     private Button updateButton;
     private SharedPreferences prefs;
     private CardInfoDialogFragment cardInfoDialogFragment;
@@ -42,6 +43,7 @@ public class SaldoActivity extends Activity {
         dateTimeView = (TextView) findViewById(R.id.dateText);
         prevBalanceView = (TextView) findViewById(R.id.prevBalanceView);
         prevDateTimeView = (TextView) findViewById(R.id.prevDateText);
+        diffView = (TextView) findViewById(R.id.diff);
 
 
         updateButton = (Button) findViewById(R.id.refreshBalanceButton);
@@ -144,6 +146,12 @@ public class SaldoActivity extends Activity {
         if (getSavedPrevBalance() != null) {
             prevBalanceView.setText(getSavedPrevBalance());
             prevDateTimeView.setText(getResources().getString(R.string.datetime_prev_text, getSavedPrevBalanceDate()));
+            try {
+                float diff = Float.parseFloat(getSavedPrevBalance()) - Float.parseFloat(getSavedBalance());
+                diffView.setText("" + diff);
+            } catch (NumberFormatException e) {
+                diffView.setText("");
+            }
         }
     }
 
