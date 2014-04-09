@@ -8,4 +8,5 @@
     <string name="card_number">Kortnummer</string>
     <string name="pin">Pin</string>
     <string name="datetime_text">Din saldo ble hentet %1$s</string>
+    <string name="datetime_prev_text">Siste oppdatering med annet beløp %1$s</string>
 </resources>

@@ -143,7 +143,7 @@ public class SaldoActivity extends Activity {
         }
         if (getSavedPrevBalance() != null) {
             prevBalanceView.setText(getSavedPrevBalance());
-            prevDateTimeView.setText(getResources().getString(R.string.datetime_text, getSavedPrevBalanceDate()));
+            prevDateTimeView.setText(getResources().getString(R.string.datetime_prev_text, getSavedPrevBalanceDate()));
         }
     }
 
