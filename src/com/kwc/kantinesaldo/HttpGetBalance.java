@@ -67,7 +67,7 @@ public abstract class HttpGetBalance extends AsyncTask<Void, Void, String> {
         } else if (pinIsIncorrect(html)) {
             Toast.makeText(context, "Feil pinkode", Toast.LENGTH_LONG).show();
             onResult(null);
-        } else if (cardnumberIsIncorrect(html)) {
+        } else if (cardNumberIsIncorrect(html)) {
             Toast.makeText(context, "Ugyldig kortnummer", Toast.LENGTH_LONG).show();
             onResult(null);
         } else {
@@ -92,7 +92,7 @@ public abstract class HttpGetBalance extends AsyncTask<Void, Void, String> {
         return html.contains("The PIN you entered is incorrect.")  || html.contains("Please enter your PIN");
     }
 
-    private boolean cardnumberIsIncorrect(String html) {
+    private boolean cardNumberIsIncorrect(String html) {
         return html.contains("Invalid card number");
     }
 

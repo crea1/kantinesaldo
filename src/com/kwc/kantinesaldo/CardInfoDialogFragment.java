@@ -14,8 +14,8 @@ import android.widget.EditText;
  */
 public abstract class CardInfoDialogFragment extends DialogFragment {
 
-    String cardNumber;
-    String pin;
+    final private String cardNumber;
+    final private String pin;
 
     public CardInfoDialogFragment(String cardNumber, String pin) {
         super();
