@@ -63,16 +63,14 @@ public class SaldoActivity extends Activity {
                                 DateFormat balanceDate = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, Locale.UK);
                                 String balanceDates = balanceDate.format(new Date());
 
-                                dateTimeView.setText(getResources().getString(R.string.datetime_text, balanceDates));
-
                                 if (!balance.equals(getSavedBalance())) {
-                                    prevBalanceView.setText(getSavedBalance());
-                                    balanceView.setText(balance);
                                     savePreference(PREF_PREV_BALANCE, getSavedBalance());
                                     savePreference(PREF_PREV_BALANCE_DATE, getSavedBalanceDate());
                                     savePreference(PREF_BALANCE, balance);
-                                    savePreference(PREF_BALANCE_DATE, balanceDates);
+
                                 }
+                                savePreference(PREF_BALANCE_DATE, balanceDates);
+                                updateDisplay();
 
                             }
 
@@ -140,15 +138,24 @@ public class SaldoActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        updateDisplay();
+    }
+
+    private void updateDisplay() {
         balanceView.setText(getSavedBalance());
-        if (getSavedBalanceDate() != null) {
-            dateTimeView.setText(getResources().getString(R.string.datetime_text, getSavedBalanceDate()));
+
+        String savedBalanceDate = getSavedBalanceDate();
+        if (savedBalanceDate != null) {
+            dateTimeView.setText(getResources().getString(R.string.datetime_text, savedBalanceDate));
         }
-        if (getSavedPrevBalance() != null) {
-            prevBalanceView.setText(getSavedPrevBalance());
-            prevDateTimeView.setText(getResources().getString(R.string.datetime_prev_text, getSavedPrevBalanceDate()));
+
+        String savedPrevBalance = getSavedPrevBalance();
+        if (savedPrevBalance != null) {
+            prevBalanceView.setText(savedPrevBalance);
+            String savedPrevBalanceDate = getSavedPrevBalanceDate();
+            prevDateTimeView.setText(getResources().getString(R.string.datetime_prev_text, savedPrevBalanceDate));
             try {
-                float diff = Float.parseFloat(getSavedBalance()) - Float.parseFloat(getSavedPrevBalance()) ;
+                float diff = Float.parseFloat(getSavedBalance()) - Float.parseFloat(savedPrevBalance) ;
                 DecimalFormat format = new DecimalFormat("#.00");
                 diffView.setText("" + format.format(diff));
             } catch (NumberFormatException e) {
