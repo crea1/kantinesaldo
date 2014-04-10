@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.Locale;
 
@@ -147,8 +148,9 @@ public class SaldoActivity extends Activity {
             prevBalanceView.setText(getSavedPrevBalance());
             prevDateTimeView.setText(getResources().getString(R.string.datetime_prev_text, getSavedPrevBalanceDate()));
             try {
-                float diff = Float.parseFloat(getSavedPrevBalance()) - Float.parseFloat(getSavedBalance());
-                diffView.setText("" + diff);
+                float diff = Float.parseFloat(getSavedBalance()) - Float.parseFloat(getSavedPrevBalance()) ;
+                DecimalFormat format = new DecimalFormat("#.00");
+                diffView.setText("" + format.format(diff));
             } catch (NumberFormatException e) {
                 diffView.setText("");
             }
