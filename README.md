@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/crea1/kantinesaldo.svg?branch=master)](https://travis-ci.org/crea1/kantinesaldo)
 Kantinesaldo android app
 ========================
 
