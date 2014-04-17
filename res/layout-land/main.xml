@@ -10,7 +10,7 @@
                   android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
                   android:layout_weight="3"
-            >
+                  android:baselineAligned="false">
 
         <LinearLayout
                 android:orientation="vertical"
@@ -24,7 +24,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="@string/datetime_text"
                     />
             <TextView
                     android:id="@id/balanceView"
@@ -32,7 +31,6 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:textSize="72sp"
-                    android:text="24,30"
                     />
         </LinearLayout>
         <LinearLayout
@@ -54,7 +52,6 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:textSize="48sp"
-                    android:text="14,04"
                     />
             <TextView
                     android:id="@+id/prevBalanceText"
