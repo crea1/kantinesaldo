@@ -10,4 +10,7 @@
     <string name="datetime_text">Din saldo per %1$s</string>
     <string name="datetime_prev_text">Saldoendring siden %1$s</string>
     <string name="prev_saldo_text">Saldo var da</string>
+
+
+    <string name="not_connecteded">Kunne ikke koble til internett</string>
 </resources>

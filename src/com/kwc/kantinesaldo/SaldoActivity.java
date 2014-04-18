@@ -1,7 +1,10 @@
 package com.kwc.kantinesaldo;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -9,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -51,39 +55,53 @@ public class SaldoActivity extends Activity {
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String cardNumber = getSavedCardNumber();
-                String pin = getSavedPin();
+                if (isCardInfoSet()) {
+                    if (isNetworkAvailable()) {
+                        HttpGetBalance httpGetBalance = new HttpGetBalance(getApplicationContext(), getSavedCardNumber(), getSavedPin()) {
 
-                if (cardNumber != null && !cardNumber.isEmpty() && pin != null && !pin.isEmpty()) {
-                    HttpGetBalance httpGetBalance = new HttpGetBalance(getApplicationContext(), cardNumber, pin) {
+                            @Override
+                            public void onResult(String balance) {
+                                if (balance != null) {
+                                    DateFormat balanceDate = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, Locale.UK);
+                                    String balanceDates = balanceDate.format(new Date());
 
-                        @Override
-                        public void onResult(String balance) {
-                            if (balance != null) {
-                                DateFormat balanceDate = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, Locale.UK);
-                                String balanceDates = balanceDate.format(new Date());
+                                    if (!balance.equals(getSavedBalance())) {
+                                        savePreference(PREF_PREV_BALANCE, getSavedBalance());
+                                        savePreference(PREF_PREV_BALANCE_DATE, getSavedBalanceDate());
+                                        savePreference(PREF_BALANCE, balance);
 
-                                if (!balance.equals(getSavedBalance())) {
-                                    savePreference(PREF_PREV_BALANCE, getSavedBalance());
-                                    savePreference(PREF_PREV_BALANCE_DATE, getSavedBalanceDate());
-                                    savePreference(PREF_BALANCE, balance);
+                                    }
+                                    savePreference(PREF_BALANCE_DATE, balanceDates);
+                                    updateDisplay();
 
                                 }
-                                savePreference(PREF_BALANCE_DATE, balanceDates);
-                                updateDisplay();
 
+                                updateButton.setEnabled(true);
                             }
-
-                            updateButton.setEnabled(true);
-                        }
-                    };
-                    httpGetBalance.execute();
-                    updateButton.setEnabled(false);
+                        };
+                        httpGetBalance.execute();
+                        updateButton.setEnabled(false);
+                    } else {
+                        Toast.makeText(getApplicationContext(), R.string.not_connecteded, Toast.LENGTH_LONG).show();
+                    }
                 } else {
                     showCardInfoDialog();
                 }
             }
         });
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+
+        return (activeNetworkInfo != null && activeNetworkInfo.isConnected());
+    }
+
+    private boolean isCardInfoSet() {
+        String cardNumber = getSavedCardNumber();
+        String pin = getSavedPin();
+        return cardNumber != null && !cardNumber.isEmpty() && pin != null && !pin.isEmpty();
     }
 
     private void showCardInfoDialog() {
@@ -97,7 +115,6 @@ public class SaldoActivity extends Activity {
         };
         cardInfoDialogFragment.show(getFragmentManager(), TAG);
     }
-
 
 
     @Override
@@ -155,7 +172,7 @@ public class SaldoActivity extends Activity {
             String savedPrevBalanceDate = getSavedPrevBalanceDate();
             prevDateTimeView.setText(getResources().getString(R.string.datetime_prev_text, savedPrevBalanceDate));
             try {
-                float diff = Float.parseFloat(getSavedBalance()) - Float.parseFloat(savedPrevBalance) ;
+                float diff = Float.parseFloat(getSavedBalance()) - Float.parseFloat(savedPrevBalance);
                 DecimalFormat format = new DecimalFormat("#.00");
                 diffView.setText("" + format.format(diff));
             } catch (NumberFormatException e) {
