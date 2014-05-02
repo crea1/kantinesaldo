@@ -20,4 +20,14 @@
             android:hint="@string/pin"
             android:ems="10"
             android:layout_gravity="center_horizontal"/>
+
+    <Switch
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/switch_downloadservice"
+            android:id="@+id/serviceSwitch"
+            android:checked="false"
+            android:padding="10dp"/>
+
+
 </LinearLayout>

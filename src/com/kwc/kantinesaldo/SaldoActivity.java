@@ -28,6 +28,7 @@ public class SaldoActivity extends Activity {
     private static final String PREF_BALANCE_DATE = "balance_date";
     private static final String PREF_PREV_BALANCE = "prev_balance";
     private static final String PREF_PREV_BALANCE_DATE = "prev_balance_date";
+    private static final String PREF_SERVICE_STATE = "service_state";
     private static final String STATE_CARDINFO_SHOWING = "cardinfo_showing";
     private TextView balanceView;
     private TextView dateTimeView;
@@ -41,7 +42,7 @@ public class SaldoActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        prefs = getPreferences(MODE_PRIVATE);
+        prefs = getSharedPreferences("kantinesaldo", MODE_PRIVATE);
         setContentView(R.layout.main);
 
         balanceView = (TextView) findViewById(R.id.balanceView);
@@ -55,6 +56,8 @@ public class SaldoActivity extends Activity {
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
                 if (isCardInfoSet()) {
                     if (isNetworkAvailable()) {
                         HttpGetBalance httpGetBalance = new HttpGetBalance(getApplicationContext(), getSavedCardNumber(), getSavedPin()) {
@@ -105,13 +108,16 @@ public class SaldoActivity extends Activity {
     }
 
     private void showCardInfoDialog() {
-        cardInfoDialogFragment = new CardInfoDialogFragment(getSavedCardNumber(), getSavedPin()) {
+        cardInfoDialogFragment = new CardInfoDialogFragment(getSavedCardNumber(), getSavedPin(), getSavedServiceState()) {
 
             @Override
-            protected void saveCardInfo(String cardNumber, String pin) {
+            protected void saveSettings(String cardNumber, String pin, boolean isServiceActive) {
                 savePreference(PREF_CARD_NUMBER, cardNumber);
                 savePreference(PREF_CARD_PIN, pin);
+                savePreference(PREF_SERVICE_STATE, isServiceActive);
+                BalanceDownloadReceiver.scheduleAlarms(SaldoActivity.this, isServiceActive);
             }
+
         };
         cardInfoDialogFragment.show(getFragmentManager(), TAG);
     }
@@ -187,6 +193,12 @@ public class SaldoActivity extends Activity {
         editor.commit();
     }
 
+    private void savePreference(String key, boolean value) {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(key, value);
+        editor.commit();
+    }
+
     private String getSavedPin() {
         return prefs.getString(PREF_CARD_PIN, null);
     }
@@ -209,5 +221,9 @@ public class SaldoActivity extends Activity {
 
     private String getSavedPrevBalanceDate() {
         return prefs.getString(PREF_PREV_BALANCE_DATE, null);
+    }
+
+    private boolean getSavedServiceState() {
+        return prefs.getBoolean(PREF_SERVICE_STATE, false);
     }
 }
