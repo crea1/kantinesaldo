@@ -33,6 +33,7 @@ public class SaldoActivity extends Activity {
     private TextView balanceView;
     private TextView dateTimeView;
     private TextView prevBalanceView;
+    private TextView prevBalanceTextView;
     private TextView prevDateTimeView;
     private TextView diffView;
     private Button updateButton;
@@ -50,6 +51,7 @@ public class SaldoActivity extends Activity {
         prevBalanceView = (TextView) findViewById(R.id.prevBalanceView);
         prevDateTimeView = (TextView) findViewById(R.id.prevDateText);
         diffView = (TextView) findViewById(R.id.diff);
+        prevBalanceView = (TextView) findViewById(R.id.prevBalanceText);
 
 
         updateButton = (Button) findViewById(R.id.refreshBalanceButton);
@@ -177,6 +179,7 @@ public class SaldoActivity extends Activity {
             prevBalanceView.setText(savedPrevBalance);
             String savedPrevBalanceDate = getSavedPrevBalanceDate();
             prevDateTimeView.setText(getResources().getString(R.string.datetime_prev_text, savedPrevBalanceDate));
+            prevBalanceTextView.setText(getResources().getString(R.string.prev_saldo_text));
             try {
                 float diff = Float.parseFloat(getSavedBalance()) - Float.parseFloat(savedPrevBalance);
                 DecimalFormat format = new DecimalFormat("#.00");
