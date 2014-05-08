@@ -53,6 +53,9 @@ public class SaldoActivity extends Activity {
         diffView = (TextView) findViewById(R.id.diff);
         prevBalanceView = (TextView) findViewById(R.id.prevBalanceText);
 
+        if (!isCardInfoSet()) {
+            showCardInfoDialog();
+        }
 
         updateButton = (Button) findViewById(R.id.refreshBalanceButton);
         updateButton.setOnClickListener(new View.OnClickListener() {
@@ -116,8 +119,12 @@ public class SaldoActivity extends Activity {
             protected void saveSettings(String cardNumber, String pin, boolean isServiceActive) {
                 savePreference(PREF_CARD_NUMBER, cardNumber);
                 savePreference(PREF_CARD_PIN, pin);
-                savePreference(PREF_SERVICE_STATE, isServiceActive);
-                BalanceDownloadReceiver.scheduleAlarms(SaldoActivity.this, isServiceActive);
+                if (isCardInfoSet()) {
+                    savePreference(PREF_SERVICE_STATE, isServiceActive);
+                } else {
+                    savePreference(PREF_SERVICE_STATE, false);
+                }
+                BalanceDownloadReceiver.scheduleAlarms(SaldoActivity.this, getSavedServiceState());
             }
 
         };
