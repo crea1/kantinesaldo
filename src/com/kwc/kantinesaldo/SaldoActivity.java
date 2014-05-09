@@ -51,7 +51,7 @@ public class SaldoActivity extends Activity {
         prevBalanceView = (TextView) findViewById(R.id.prevBalanceView);
         prevDateTimeView = (TextView) findViewById(R.id.prevDateText);
         diffView = (TextView) findViewById(R.id.diff);
-        prevBalanceView = (TextView) findViewById(R.id.prevBalanceText);
+        prevBalanceTextView = (TextView) findViewById(R.id.prevBalanceText);
 
         if (!isCardInfoSet()) {
             showCardInfoDialog();
