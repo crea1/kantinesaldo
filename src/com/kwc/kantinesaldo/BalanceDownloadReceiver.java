@@ -61,7 +61,7 @@ public class BalanceDownloadReceiver extends BroadcastReceiver {
             @Override
             public void onResult(String balance) {
                 if (balance != null) {
-                    DateFormat balanceDate = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, Locale.UK);
+                    DateFormat balanceDate = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, context.getResources().getConfiguration().locale);
                     String balanceDates = balanceDate.format(new Date());
 
                     if (!balance.equals(getSavedBalance())) {

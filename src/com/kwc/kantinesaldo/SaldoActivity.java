@@ -17,7 +17,6 @@ import android.widget.Toast;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.util.Date;
-import java.util.Locale;
 
 public class SaldoActivity extends Activity {
 
@@ -70,7 +69,7 @@ public class SaldoActivity extends Activity {
                             @Override
                             public void onResult(String balance) {
                                 if (balance != null) {
-                                    DateFormat balanceDate = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, Locale.UK);
+                                    DateFormat balanceDate = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, getResources().getConfiguration().locale);
                                     String balanceDates = balanceDate.format(new Date());
 
                                     if (!balance.equals(getSavedBalance())) {
