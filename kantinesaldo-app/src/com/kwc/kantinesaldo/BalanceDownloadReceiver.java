@@ -11,6 +11,9 @@ import android.util.Log;
 import java.util.Date;
 
 /**
+ * This is the services that updates the balance every n hours if the option is enabled
+ * in the user preferences.
+ *
  * @author Marius Kristensen
  */
 public class BalanceDownloadReceiver extends BroadcastReceiver {

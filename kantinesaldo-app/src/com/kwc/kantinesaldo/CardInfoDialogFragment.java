@@ -11,6 +11,8 @@ import android.widget.EditText;
 import android.widget.Switch;
 
 /**
+ * This is for setting user preferences.
+ *
  * @author Marius Kristensen
  */
 public abstract class CardInfoDialogFragment extends DialogFragment {

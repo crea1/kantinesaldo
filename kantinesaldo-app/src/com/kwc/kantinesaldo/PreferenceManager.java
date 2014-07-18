@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
+ * This handles saving and loading of user preferences and downloaded data.
+ *
  * @author Marius Kristensen
  */
 public class PreferenceManager {

@@ -16,6 +16,12 @@ import android.widget.Toast;
 import java.text.DecimalFormat;
 import java.util.Date;
 
+
+/**
+ * This is the main activity showing the balance etc.
+ *
+ * @author Marius Kristensen
+ */
 public class SaldoActivity extends Activity {
 
     private static final String TAG = "kantinesaldo";
