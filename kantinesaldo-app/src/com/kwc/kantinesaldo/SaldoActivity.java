@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.util.Date;
 
@@ -34,7 +33,7 @@ public class SaldoActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        preferenceManager = new PreferenceManager(getSharedPreferences("kantinesaldo", MODE_PRIVATE));
+        preferenceManager = new PreferenceManager(getSharedPreferences("kantinesaldo", MODE_PRIVATE), getResources().getConfiguration().locale);
         setContentView(R.layout.main);
 
         balanceView = (TextView) findViewById(R.id.balanceView);
@@ -61,16 +60,13 @@ public class SaldoActivity extends Activity {
                             @Override
                             public void onResult(String balance) {
                                 if (balance != null) {
-                                    DateFormat balanceDate = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, getResources().getConfiguration().locale);
-                                    String balanceDates = balanceDate.format(new Date());
-
                                     if (!balance.equals(preferenceManager.getSavedBalance())) {
                                         preferenceManager.savePreference(PreferenceManager.PREV_BALANCE, preferenceManager.getSavedBalance());
                                         preferenceManager.savePreference(PreferenceManager.PREV_BALANCE_DATE, preferenceManager.getSavedBalanceDate());
                                         preferenceManager.savePreference(PreferenceManager.BALANCE, balance);
 
                                     }
-                                    preferenceManager.savePreference(PreferenceManager.BALANCE_DATE, balanceDates);
+                                    preferenceManager.savePreference(PreferenceManager.BALANCE_DATE, new Date().getTime());
                                     updateDisplay();
 
                                 }

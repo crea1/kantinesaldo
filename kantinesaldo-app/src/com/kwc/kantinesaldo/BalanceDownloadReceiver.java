@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.os.SystemClock;
 import android.util.Log;
 
-import java.text.DateFormat;
 import java.util.Date;
 
 /**
@@ -22,7 +21,7 @@ public class BalanceDownloadReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, Intent intent) {
-        preferenceManager = new PreferenceManager(context.getSharedPreferences("kantinesaldo", Context.MODE_PRIVATE));
+        preferenceManager = new PreferenceManager(context.getSharedPreferences("kantinesaldo", Context.MODE_PRIVATE), context.getResources().getConfiguration().locale);
         Log.d(TAG, new Date().toString());
         downloadBalance(context);
         scheduleAlarms(context, preferenceManager.getSavedServiceState());
@@ -52,16 +51,13 @@ public class BalanceDownloadReceiver extends BroadcastReceiver {
             @Override
             public void onResult(String balance) {
                 if (balance != null) {
-                    DateFormat balanceDate = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, context.getResources().getConfiguration().locale);
-                    String balanceDates = balanceDate.format(new Date());
-
                     if (!balance.equals(preferenceManager.getSavedBalance())) {
                         preferenceManager.savePreference(PreferenceManager.PREV_BALANCE, preferenceManager.getSavedBalance());
                         preferenceManager.savePreference(PreferenceManager.PREV_BALANCE_DATE, preferenceManager.getSavedBalanceDate());
                         preferenceManager.savePreference(PreferenceManager.BALANCE, balance);
 
                     }
-                    preferenceManager.savePreference(PreferenceManager.BALANCE_DATE, balanceDates);
+                    preferenceManager.savePreference(PreferenceManager.BALANCE_DATE, new Date().getTime());
                     Log.d(TAG, "Downloaded balance " + balance);
                 }
             }
