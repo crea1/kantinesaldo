@@ -13,15 +13,16 @@ import java.util.Locale;
  * @author Marius Kristensen
  */
 public class PreferenceManager {
-    public static final String CARD_NUMBER = "card_number";
-    public static final String CARD_PIN = "card_pin";
-    public static final String BALANCE = "balance";
-    public static final String BALANCE_DATE = "balance_date_long";
-    public static final String PREV_BALANCE = "prev_balance";
-    public static final String PREV_BALANCE_DATE = "prev_balance_date_long";
-    public static final String SERVICE_STATE = "service_state";
-    protected static final String BALANCE_DATE_OLD = "balance_date";
-    protected static final String PREV_BALANCE_DATE_OLD = "prev_balance_date";
+    private static final String CARD_NUMBER = "card_number";
+    private static final String CARD_PIN = "card_pin";
+    private static final String BALANCE = "balance";
+    private static final String BALANCE_DATE = "balance_date_long";
+    private static final String PREV_BALANCE = "prev_balance";
+    private static final String PREV_BALANCE_DATE = "prev_balance_date_long";
+    private static final String SERVICE_STATE = "service_state";
+    private static final String BALANCE_NOTIFICATION_THRESHOLD = "balance_notification_threshold";
+    private static final String BALANCE_DATE_OLD = "balance_date";
+    private static final String PREV_BALANCE_DATE_OLD = "prev_balance_date";
     private static final String DATES_MIGRATED = "date_migrated";
 
     private final SharedPreferences prefs;
@@ -55,34 +56,77 @@ public class PreferenceManager {
         editor.commit();
     }
 
+    public void savePreference(String key, float value) {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putFloat(key, value);
+        editor.commit();
+    }
+
+
+    public void setPin(String pin) {
+        savePreference(CARD_PIN, pin);
+    }
+
     public String getSavedPin() {
         return prefs.getString(CARD_PIN, null);
+    }
+
+    public void setSavedCardNumber(String cardNumber) {
+        savePreference(CARD_NUMBER, cardNumber);
     }
 
     public String getSavedCardNumber() {
         return prefs.getString(CARD_NUMBER, null);
     }
 
+    public void setSavedBalance(String balance) {
+        savePreference(BALANCE, balance);
+    }
+
     public String getSavedBalance() {
         return prefs.getString(BALANCE, null);
     }
 
-    public String getSavedBalanceDate() {
-        long date = prefs.getLong(BALANCE_DATE, 0l);
-        return date == 0l ? null : formatDate(date, locale);
+    public void setSavedBalanceDate(long time) {
+        savePreference(BALANCE_DATE, time);
+    }
+
+    public long getSavedBalanceDate() {
+        return prefs.getLong(BALANCE_DATE, 0l);
+        //return date == 0l ? null : formatDate(date, locale);
+    }
+
+    public void setSavedPrevBalance(String prevBalance) {
+        savePreference(PREV_BALANCE, prevBalance);
     }
 
     public String getSavedPrevBalance() {
         return prefs.getString(PREV_BALANCE, null);
     }
 
+    public void setSavedPrevBalanceDate(long time) {
+        savePreference(PREV_BALANCE_DATE, time);
+    }
+
     public String getSavedPrevBalanceDate() {
         long date = prefs.getLong(BALANCE_DATE, 0l);
-        return date == 0l ? null : formatDate(date, locale);
+        return date == 0l ? null : formatDate(date);
+    }
+
+    public void setSavedServiceState(boolean serviceState) {
+        savePreference(SERVICE_STATE, serviceState);
     }
 
     public boolean getSavedServiceState() {
         return prefs.getBoolean(SERVICE_STATE, false);
+    }
+
+    public void setBalanceThreshold(float threshold) {
+        savePreference(BALANCE_NOTIFICATION_THRESHOLD, threshold);
+    }
+
+    public float getBalanceTreshold() {
+        return prefs.getFloat(BALANCE_NOTIFICATION_THRESHOLD, 0.0f);
     }
 
     protected void convertSavedDateStringsToLong(String oldKey, String newKey) {
@@ -101,7 +145,7 @@ public class PreferenceManager {
 
     }
 
-    protected String formatDate(Long date, Locale locale) {
+    public String formatDate(Long date) {
         DateFormat dateFormatter = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, locale);
         return dateFormatter.format(date);
     }

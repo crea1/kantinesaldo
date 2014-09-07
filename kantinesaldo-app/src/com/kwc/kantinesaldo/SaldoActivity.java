@@ -67,12 +67,12 @@ public class SaldoActivity extends Activity {
                             public void onResult(String balance) {
                                 if (balance != null) {
                                     if (!balance.equals(preferenceManager.getSavedBalance())) {
-                                        preferenceManager.savePreference(PreferenceManager.PREV_BALANCE, preferenceManager.getSavedBalance());
-                                        preferenceManager.savePreference(PreferenceManager.PREV_BALANCE_DATE, preferenceManager.getSavedBalanceDate());
-                                        preferenceManager.savePreference(PreferenceManager.BALANCE, balance);
+                                        preferenceManager.setSavedPrevBalance(preferenceManager.getSavedBalance());
+                                        preferenceManager.setSavedPrevBalanceDate(preferenceManager.getSavedBalanceDate());
+                                        preferenceManager.setSavedBalance(balance);
 
                                     }
-                                    preferenceManager.savePreference(PreferenceManager.BALANCE_DATE, new Date().getTime());
+                                    preferenceManager.setSavedBalanceDate(new Date().getTime());
                                     updateDisplay();
 
                                 }
@@ -110,12 +110,12 @@ public class SaldoActivity extends Activity {
 
             @Override
             protected void saveSettings(String cardNumber, String pin, boolean isServiceActive) {
-                preferenceManager.savePreference(PreferenceManager.CARD_NUMBER, cardNumber);
-                preferenceManager.savePreference(PreferenceManager.CARD_PIN, pin);
+                preferenceManager.setSavedCardNumber(cardNumber);
+                preferenceManager.setPin(pin);
                 if (isCardInfoSet()) {
-                    preferenceManager.savePreference(PreferenceManager.SERVICE_STATE, isServiceActive);
+                    preferenceManager.setSavedServiceState(isServiceActive);
                 } else {
-                    preferenceManager.savePreference(PreferenceManager.SERVICE_STATE, false);
+                    preferenceManager.setSavedServiceState(false);
                 }
                 BalanceDownloadReceiver.scheduleAlarms(SaldoActivity.this, preferenceManager.getSavedServiceState());
             }
@@ -169,7 +169,9 @@ public class SaldoActivity extends Activity {
     private void updateDisplay() {
         balanceView.setText(preferenceManager.getSavedBalance());
 
-        String savedBalanceDate = preferenceManager.getSavedBalanceDate();
+        long date = preferenceManager.getSavedBalanceDate();
+        String savedBalanceDate = date == 0l ? null : preferenceManager.formatDate(date);
+        ;
         if (savedBalanceDate != null) {
             dateTimeView.setText(getResources().getString(R.string.datetime_text, savedBalanceDate));
         }

@@ -35,8 +35,8 @@ public class BalanceDownloadReceiver extends BroadcastReceiver {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent balanceDownloadReceiver = new Intent(context, BalanceDownloadReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, balanceDownloadReceiver, PendingIntent.FLAG_UPDATE_CURRENT);
-        if (isServiceActive) {
 
+        if (isServiceActive) {
             alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
                     SystemClock.elapsedRealtime() + intervalMillis,
                     intervalMillis,
@@ -55,12 +55,11 @@ public class BalanceDownloadReceiver extends BroadcastReceiver {
             public void onResult(String balance) {
                 if (balance != null) {
                     if (!balance.equals(preferenceManager.getSavedBalance())) {
-                        preferenceManager.savePreference(PreferenceManager.PREV_BALANCE, preferenceManager.getSavedBalance());
-                        preferenceManager.savePreference(PreferenceManager.PREV_BALANCE_DATE, preferenceManager.getSavedBalanceDate());
-                        preferenceManager.savePreference(PreferenceManager.BALANCE, balance);
-
+                        preferenceManager.setSavedPrevBalance(preferenceManager.getSavedBalance());
+                        preferenceManager.setSavedPrevBalanceDate(preferenceManager.getSavedBalanceDate());
+                        preferenceManager.setSavedBalance(balance);
                     }
-                    preferenceManager.savePreference(PreferenceManager.BALANCE_DATE, new Date().getTime());
+                    preferenceManager.setSavedBalanceDate(new Date().getTime());
                     Log.d(TAG, "Downloaded balance " + balance);
                 }
             }
