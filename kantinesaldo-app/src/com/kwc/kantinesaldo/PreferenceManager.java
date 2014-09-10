@@ -149,4 +149,10 @@ public class PreferenceManager {
         DateFormat dateFormatter = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, locale);
         return dateFormatter.format(date);
     }
+
+    public boolean isCardInfoSet() {
+        String cardNumber = getSavedCardNumber();
+        String pin = getSavedPin();
+        return cardNumber != null && !cardNumber.isEmpty() && pin != null && !pin.isEmpty();
+    }
 }

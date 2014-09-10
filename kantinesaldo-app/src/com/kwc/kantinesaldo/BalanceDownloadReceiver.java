@@ -41,10 +41,10 @@ public class BalanceDownloadReceiver extends BroadcastReceiver {
                     SystemClock.elapsedRealtime() + intervalMillis,
                     intervalMillis,
                     pendingIntent);
-            Log.d(TAG, "ON");
+            Log.d(TAG, "Automatic download turned ON");
         } else {
             alarmManager.cancel(pendingIntent);
-            Log.d(TAG, "OFF");
+            Log.d(TAG, "Automatic download turned OFF");
         }
     }
 

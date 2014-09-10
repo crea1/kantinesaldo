@@ -106,23 +106,24 @@ public class SaldoActivity extends Activity {
     }
 
     private void showCardInfoDialog() {
-        cardInfoDialogFragment = new CardInfoDialogFragment(preferenceManager.getSavedCardNumber(), preferenceManager.getSavedPin(), preferenceManager.getSavedServiceState()) {
+        cardInfoDialogFragment = new CardInfoDialogFragment(preferenceManager.getSavedCardNumber(), preferenceManager.getSavedPin()) {
 
             @Override
-            protected void saveSettings(String cardNumber, String pin, boolean isServiceActive) {
+            protected void saveSettings(String cardNumber, String pin) {
                 preferenceManager.setSavedCardNumber(cardNumber);
                 preferenceManager.setPin(pin);
-                if (isCardInfoSet()) {
-                    preferenceManager.setSavedServiceState(isServiceActive);
-                } else {
-                    preferenceManager.setSavedServiceState(false);
-                }
-                BalanceDownloadReceiver.scheduleAlarms(SaldoActivity.this, preferenceManager.getSavedServiceState());
             }
 
         };
         cardInfoDialogFragment.show(getFragmentManager(), TAG);
     }
+
+
+    private void showSettingsDialog() {
+        SettingsFragment settingsFragment = new SettingsFragment(preferenceManager);
+        settingsFragment.show(getFragmentManager(), TAG);
+    }
+
 
 
     @Override
@@ -137,7 +138,7 @@ public class SaldoActivity extends Activity {
         if (item.getItemId() == R.id.menu_card_settings) {
             showCardInfoDialog();
         } else if (item.getItemId() == R.id.menu_settings) {
-            //TODO show
+            showSettingsDialog();
         }
         return true;
     }
