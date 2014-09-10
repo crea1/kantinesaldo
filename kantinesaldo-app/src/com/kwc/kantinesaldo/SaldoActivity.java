@@ -134,8 +134,10 @@ public class SaldoActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_settings) {
+        if (item.getItemId() == R.id.menu_card_settings) {
             showCardInfoDialog();
+        } else if (item.getItemId() == R.id.menu_settings) {
+            //TODO show
         }
         return true;
     }
