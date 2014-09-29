@@ -14,7 +14,8 @@
     <string name="switch_downloadservice">Daglig saldonedlasting</string>
     <string name="low_balance">Saldo på kantinekort er lav</string>
     <string name="low_balance_text">Din balanse er %1$s</string>
-    <string name="threshold">Varsle når beløp er under:</string>
+    <string name="threshold_text">Varsle når beløp er under:</string>
+    <string name="threshold_value">%1$s,-</string>
     <string name="settings">Innstillinger</string>
     <string name="no_notification">Varsling avskrudd</string>
 </resources>

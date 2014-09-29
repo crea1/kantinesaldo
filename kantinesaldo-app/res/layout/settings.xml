@@ -16,7 +16,7 @@
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/threshold"
+            android:text="@string/threshold_text"
             android:textSize="16sp"
             android:paddingLeft="10sp"
             />
@@ -40,6 +40,7 @@
             android:paddingTop="10sp"
             android:id="@+id/seekBar"
             android:layout_gravity="center_horizontal"
+            android:progress="0"
             android:max="100"
             />
 

@@ -4,10 +4,12 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -36,16 +38,27 @@ public class SettingsFragment extends DialogFragment {
         builder.setView(settingsView);
 
         final Switch serviceSwitch = (Switch) settingsView.findViewById(R.id.serviceSwitch);
-        final TextView thresholdText = (TextView) settingsView.findViewById(R.id.threshold);
-        final SeekBar seekBar = (SeekBar) settingsView.findViewById(R.id.seekBar);
+        serviceSwitch.setChecked(preferenceManager.getSavedServiceState());
 
+        final TextView thresholdText = (TextView) settingsView.findViewById(R.id.threshold);
+        thresholdText.setEnabled(serviceSwitch.isChecked());
+        if (preferenceManager.getBalanceTreshold() == 0f) {
+            thresholdText.setText(R.string.no_notification);
+        } else {
+            thresholdText.setText(getString(R.string.threshold_value, Integer.toString((int) preferenceManager.getBalanceTreshold())));
+        }
+
+
+        final SeekBar seekBar = (SeekBar) settingsView.findViewById(R.id.seekBar);
+        seekBar.setProgress((int) preferenceManager.getBalanceTreshold());
+        seekBar.setEnabled(serviceSwitch.isChecked());
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
                 if (progress == 0) {
-                    thresholdText.setText(R.string.no_notification);
+                    thresholdText.setText(getString(R.string.no_notification));
                 } else {
-                    thresholdText.setText(Integer.toString(progress) + ",-");
+                    thresholdText.setText(getString(R.string.threshold_value, Integer.toString(progress)));
                 }
             }
 
@@ -60,9 +73,16 @@ public class SettingsFragment extends DialogFragment {
             }
         });
 
-        serviceSwitch.setChecked(preferenceManager.getSavedServiceState());
-        thresholdText.setText(Float.toString(preferenceManager.getBalanceTreshold()));
-        seekBar.setProgress((int) preferenceManager.getBalanceTreshold());
+        serviceSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                seekBar.setEnabled(b);
+                thresholdText.setEnabled(b);
+            }
+        });
+
+
+
 
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
