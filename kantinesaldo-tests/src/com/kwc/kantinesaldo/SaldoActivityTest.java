@@ -30,7 +30,34 @@ public class SaldoActivityTest extends ActivityInstrumentationTestCase2<SaldoAct
         assertTrue(View.VISIBLE == prevDateText.getVisibility());
     }
 
-//    public void testConvertOldSavedDatesToLong() throws Exception {
+    public void testParseFloat() throws Exception {
+        activity.preferenceManager.setSavedBalance("20.0");
+        assertEquals(20.0f, activity.preferenceManager.getBalance());
+
+        activity.preferenceManager.setSavedBalance("20");
+        assertEquals(20.0f, activity.preferenceManager.getBalance());
+
+        activity.preferenceManager.setSavedBalance("20.30");
+        assertEquals(20.3f, activity.preferenceManager.getBalance());
+
+        activity.preferenceManager.setSavedBalance("-30.23");
+        assertEquals(-30.23f, activity.preferenceManager.getBalance());
+
+        activity.preferenceManager.setSavedBalance("10,4");
+        assertEquals(10.4f, activity.preferenceManager.getBalance());
+
+        activity.preferenceManager.setSavedBalance("300.230001");
+        assertEquals(300.23f, activity.preferenceManager.getBalance());
+
+        activity.preferenceManager.setSavedBalance(null);
+        assertEquals(0f, activity.preferenceManager.getBalance());
+
+        activity.preferenceManager.setSavedBalance("");
+        assertEquals(0f, activity.preferenceManager.getBalance());
+
+    }
+
+    //    public void testConvertOldSavedDatesToLong() throws Exception {
 //        long now = new Date().getTime();
 //
 //        Locale locale = activity.getResources().getConfiguration().locale;
