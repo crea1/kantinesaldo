@@ -186,7 +186,7 @@ public class SaldoActivity extends Activity {
             prevDateTimeView.setText(getResources().getString(R.string.datetime_prev_text, savedPrevBalanceDate));
             prevBalanceTextView.setText(getResources().getString(R.string.prev_saldo_text));
             try {
-                float diff = Float.parseFloat(preferenceManager.getSavedBalance()) - Float.parseFloat(savedPrevBalance);
+                float diff = preferenceManager.getBalance() - Float.parseFloat(savedPrevBalance);
                 DecimalFormat format = new DecimalFormat("#.00");
                 diffView.setText("" + format.format(diff));
             } catch (NumberFormatException e) {
