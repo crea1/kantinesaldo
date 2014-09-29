@@ -75,7 +75,7 @@ public class BalanceDownloadReceiver extends BroadcastReceiver {
     public void fireBalanceBelowThresholdNotification(Context context) {
         float balanceTreshold = preferenceManager.getBalanceTreshold();
         float balance = preferenceManager.getBalance();
-        if (balanceTreshold >= balance) {
+        if (balanceTreshold != 0f && balanceTreshold >= balance) {
             Log.d(TAG, "Notification fired " + balance + " is below " + balanceTreshold);
             Intent intent = new Intent(context, SaldoActivity.class);
             TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(context);
