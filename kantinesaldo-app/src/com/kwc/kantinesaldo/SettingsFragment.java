@@ -8,8 +8,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.Switch;
+import android.widget.TextView;
 
 /**
  * @author Marius Kristensen
@@ -33,15 +34,38 @@ public class SettingsFragment extends DialogFragment {
         builder.setView(settingsView);
 
         final Switch serviceSwitch = (Switch) settingsView.findViewById(R.id.serviceSwitch);
-        final EditText thresholdText = (EditText) settingsView.findViewById(R.id.threshold);
+        final TextView thresholdText = (TextView) settingsView.findViewById(R.id.threshold);
+        final SeekBar seekBar = (SeekBar) settingsView.findViewById(R.id.seekBar);
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
+                if (progress == 0) {
+                    thresholdText.setText(R.string.no_notification);
+                } else {
+                    thresholdText.setText(Integer.toString(progress) + ",-");
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
         serviceSwitch.setChecked(preferenceManager.getSavedServiceState());
         thresholdText.setText(Float.toString(preferenceManager.getBalanceTreshold()));
+        seekBar.setProgress((int) preferenceManager.getBalanceTreshold());
 
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                float threshold = Float.parseFloat(thresholdText.getText().toString());
+                float threshold = seekBar.getProgress();
                 preferenceManager.setBalanceThreshold(threshold);
                 if (preferenceManager.isCardInfoSet()) {
                     preferenceManager.setSavedServiceState(serviceSwitch.isChecked());

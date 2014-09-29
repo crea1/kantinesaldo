@@ -11,14 +11,36 @@
             android:text="@string/switch_downloadservice"
             android:id="@+id/serviceSwitch"
             android:checked="false"
-            android:padding="10dp"/>
-
-    <EditText
-            android:id="@+id/threshold"
+            android:textSize="16sp"
+            android:padding="10sp"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/threshold"
+            android:textSize="16sp"
+            android:paddingLeft="10sp"
+            />
+    <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="number"
-            android:hint="@string/threshold"
-            android:layout_gravity="center_horizontal"/>
+            android:orientation="horizontal"
+            android:paddingTop="20sp">
+        <TextView
+                android:id="@+id/threshold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="22sp"
+                android:gravity="center"
+                />
+    </LinearLayout>
+
+    <SeekBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10sp"
+            android:id="@+id/seekBar"
+            android:layout_gravity="center_horizontal"
+            android:max="100"
+            />
 
 </LinearLayout>
