@@ -26,6 +26,7 @@ public class SaldoActivity extends Activity {
 
     private static final String TAG = "kantinesaldo";
     private static final String STATE_CARDINFO_SHOWING = "cardinfo_showing";
+    private static final String STATE_SETTINGS_SHOWING = "settings_showing";
     private TextView balanceView;
     private TextView dateTimeView;
     private TextView prevBalanceView;
@@ -35,6 +36,7 @@ public class SaldoActivity extends Activity {
     private Button updateButton;
     private CardInfoDialogFragment cardInfoDialogFragment;
     protected PreferenceManager preferenceManager;
+    private SettingsFragment settingsFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -120,7 +122,7 @@ public class SaldoActivity extends Activity {
 
 
     private void showSettingsDialog() {
-        SettingsFragment settingsFragment = new SettingsFragment(preferenceManager);
+        settingsFragment = new SettingsFragment(preferenceManager);
         settingsFragment.show(getFragmentManager(), TAG);
     }
 
@@ -145,11 +147,8 @@ public class SaldoActivity extends Activity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        if (cardInfoDialogFragment != null && cardInfoDialogFragment.getDialog() != null) {
-            outState.putBoolean(STATE_CARDINFO_SHOWING, true);
-        } else {
-            outState.putBoolean(STATE_CARDINFO_SHOWING, false);
-        }
+        outState.putBoolean(STATE_CARDINFO_SHOWING, cardInfoDialogFragment != null && cardInfoDialogFragment.getDialog() != null);
+        outState.putBoolean(STATE_SETTINGS_SHOWING, settingsFragment != null && settingsFragment.getActivity() != null);
         super.onSaveInstanceState(outState);
     }
 
@@ -159,6 +158,9 @@ public class SaldoActivity extends Activity {
         if (savedInstanceState != null) {
             if (savedInstanceState.getBoolean(STATE_CARDINFO_SHOWING)) {
                 showCardInfoDialog();
+            }
+            if (savedInstanceState.getBoolean(STATE_SETTINGS_SHOWING)) {
+                showSettingsDialog();
             }
         }
     }

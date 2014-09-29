@@ -22,7 +22,9 @@ public class SettingsFragment extends DialogFragment {
     private final PreferenceManager preferenceManager;
 
     public SettingsFragment(PreferenceManager preferenceManager) {
+        super();
         this.preferenceManager = preferenceManager;
+        setRetainInstance(true);
     }
 
     @Override
