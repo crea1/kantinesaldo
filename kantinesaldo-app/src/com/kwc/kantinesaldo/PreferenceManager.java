@@ -87,6 +87,15 @@ public class PreferenceManager {
         return prefs.getString(BALANCE, null);
     }
 
+    public Float getBalance() {
+        String savedBalance = getSavedBalance();
+        if (savedBalance != null && savedBalance.length() > 0) {
+            savedBalance = savedBalance.replace(",", ".");
+            return Float.parseFloat(savedBalance);
+        }
+        return 0f;
+    }
+
     public void setSavedBalanceDate(long time) {
         savePreference(BALANCE_DATE, time);
     }
