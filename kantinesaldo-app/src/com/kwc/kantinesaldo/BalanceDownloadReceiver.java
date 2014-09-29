@@ -1,7 +1,10 @@
 package com.kwc.kantinesaldo;
 
 import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +22,7 @@ import java.util.Date;
 public class BalanceDownloadReceiver extends BroadcastReceiver {
 
     private static final String TAG = "kantinesaldo";
+    private static final int NOTIFICATION_ID = 1;
     private PreferenceManager preferenceManager;
     private static final long intervalMillis = 1000 * 60 * 60 * 6L; // 6 hours
 
@@ -58,6 +62,7 @@ public class BalanceDownloadReceiver extends BroadcastReceiver {
                         preferenceManager.setSavedPrevBalance(preferenceManager.getSavedBalance());
                         preferenceManager.setSavedPrevBalanceDate(preferenceManager.getSavedBalanceDate());
                         preferenceManager.setSavedBalance(balance);
+                        fireBalanceBelowThresholdNotification(context);
                     }
                     preferenceManager.setSavedBalanceDate(new Date().getTime());
                     Log.d(TAG, "Downloaded balance " + balance);
@@ -65,5 +70,29 @@ public class BalanceDownloadReceiver extends BroadcastReceiver {
             }
         };
         httpGetBalance.execute();
+    }
+
+    public void fireBalanceBelowThresholdNotification(Context context) {
+        float balanceTreshold = preferenceManager.getBalanceTreshold();
+        float balance = preferenceManager.getBalance();
+        if (balanceTreshold >= balance) {
+            Log.d(TAG, "Notification fired " + balance + " is below " + balanceTreshold);
+            Intent intent = new Intent(context, SaldoActivity.class);
+            TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(context);
+            taskStackBuilder.addParentStack(SaldoActivity.class);
+            taskStackBuilder.addNextIntent(intent);
+            PendingIntent saldoActivity = taskStackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            Notification.Builder notificationBuilder = new Notification.Builder(context)
+                    .setSmallIcon(R.drawable.ic_stat_info)
+                    .setTicker(context.getString(R.string.low_balance))
+                    .setAutoCancel(true)
+                    .setContentTitle(context.getString(R.string.low_balance))
+                    .setContentText(context.getString(R.string.low_balance_text, balance))
+                    .setContentIntent(saldoActivity);
+
+            NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager.notify(1, notificationBuilder.build());
+        }
     }
 }

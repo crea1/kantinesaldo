@@ -12,6 +12,8 @@
     <string name="prev_saldo_text">Saldo var da</string>
     <string name="not_connecteded">Kunne ikke koble til internett</string>
     <string name="switch_downloadservice">Daglig saldonedlasting</string>
+    <string name="low_balance">Saldo på kantinekort er lav</string>
+    <string name="low_balance_text">Din balanse er %1$s</string>
     <string name="threshold">Varslingsbeløp</string>
     <string name="settings">Innstillinger</string>
 </resources>
