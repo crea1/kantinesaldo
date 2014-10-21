@@ -16,6 +16,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * This handles downloading of the balance. It uses AsyncTask to avoid
+ * hugging the UI thread.
+ *
  * @author Marius Kristensen
  */
 public abstract class HttpGetBalance extends AsyncTask<Void, Void, String> {

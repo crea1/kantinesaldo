@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <Switch
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/switch_downloadservice"
+            android:id="@+id/serviceSwitch"
+            android:checked="false"
+            android:textSize="16sp"
+            android:padding="10sp"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/threshold_text"
+            android:textSize="16sp"
+            android:paddingLeft="10sp"
+            />
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="20sp">
+        <TextView
+                android:id="@+id/threshold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="22sp"
+                android:gravity="center"
+                />
+    </LinearLayout>
+
+    <SeekBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10sp"
+            android:id="@+id/seekBar"
+            android:layout_gravity="center_horizontal"
+            android:progress="0"
+            android:max="100"
+            />
+
+</LinearLayout>

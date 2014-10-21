@@ -16,10 +16,17 @@ import android.widget.Toast;
 import java.text.DecimalFormat;
 import java.util.Date;
 
+
+/**
+ * This is the main activity showing the balance etc.
+ *
+ * @author Marius Kristensen
+ */
 public class SaldoActivity extends Activity {
 
     private static final String TAG = "kantinesaldo";
     private static final String STATE_CARDINFO_SHOWING = "cardinfo_showing";
+    private static final String STATE_SETTINGS_SHOWING = "settings_showing";
     private TextView balanceView;
     private TextView dateTimeView;
     private TextView prevBalanceView;
@@ -29,6 +36,7 @@ public class SaldoActivity extends Activity {
     private Button updateButton;
     private CardInfoDialogFragment cardInfoDialogFragment;
     protected PreferenceManager preferenceManager;
+    private SettingsFragment settingsFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,12 +69,12 @@ public class SaldoActivity extends Activity {
                             public void onResult(String balance) {
                                 if (balance != null) {
                                     if (!balance.equals(preferenceManager.getSavedBalance())) {
-                                        preferenceManager.savePreference(PreferenceManager.PREV_BALANCE, preferenceManager.getSavedBalance());
-                                        preferenceManager.savePreference(PreferenceManager.PREV_BALANCE_DATE, preferenceManager.getSavedBalanceDate());
-                                        preferenceManager.savePreference(PreferenceManager.BALANCE, balance);
+                                        preferenceManager.setSavedPrevBalance(preferenceManager.getSavedBalance());
+                                        preferenceManager.setSavedPrevBalanceDate(preferenceManager.getSavedBalanceDate());
+                                        preferenceManager.setSavedBalance(balance);
 
                                     }
-                                    preferenceManager.savePreference(PreferenceManager.BALANCE_DATE, new Date().getTime());
+                                    preferenceManager.setSavedBalanceDate(new Date().getTime());
                                     updateDisplay();
 
                                 }
@@ -100,23 +108,24 @@ public class SaldoActivity extends Activity {
     }
 
     private void showCardInfoDialog() {
-        cardInfoDialogFragment = new CardInfoDialogFragment(preferenceManager.getSavedCardNumber(), preferenceManager.getSavedPin(), preferenceManager.getSavedServiceState()) {
+        cardInfoDialogFragment = new CardInfoDialogFragment(preferenceManager.getSavedCardNumber(), preferenceManager.getSavedPin()) {
 
             @Override
-            protected void saveSettings(String cardNumber, String pin, boolean isServiceActive) {
-                preferenceManager.savePreference(PreferenceManager.CARD_NUMBER, cardNumber);
-                preferenceManager.savePreference(PreferenceManager.CARD_PIN, pin);
-                if (isCardInfoSet()) {
-                    preferenceManager.savePreference(PreferenceManager.SERVICE_STATE, isServiceActive);
-                } else {
-                    preferenceManager.savePreference(PreferenceManager.SERVICE_STATE, false);
-                }
-                BalanceDownloadReceiver.scheduleAlarms(SaldoActivity.this, preferenceManager.getSavedServiceState());
+            protected void saveSettings(String cardNumber, String pin) {
+                preferenceManager.setSavedCardNumber(cardNumber);
+                preferenceManager.setPin(pin);
             }
 
         };
         cardInfoDialogFragment.show(getFragmentManager(), TAG);
     }
+
+
+    private void showSettingsDialog() {
+        settingsFragment = new SettingsFragment(preferenceManager);
+        settingsFragment.show(getFragmentManager(), TAG);
+    }
+
 
 
     @Override
@@ -128,19 +137,18 @@ public class SaldoActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_settings) {
+        if (item.getItemId() == R.id.menu_card_settings) {
             showCardInfoDialog();
+        } else if (item.getItemId() == R.id.menu_settings) {
+            showSettingsDialog();
         }
         return true;
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        if (cardInfoDialogFragment != null && cardInfoDialogFragment.getDialog() != null) {
-            outState.putBoolean(STATE_CARDINFO_SHOWING, true);
-        } else {
-            outState.putBoolean(STATE_CARDINFO_SHOWING, false);
-        }
+        outState.putBoolean(STATE_CARDINFO_SHOWING, cardInfoDialogFragment != null && cardInfoDialogFragment.getDialog() != null);
+        outState.putBoolean(STATE_SETTINGS_SHOWING, settingsFragment != null && settingsFragment.getActivity() != null);
         super.onSaveInstanceState(outState);
     }
 
@@ -150,6 +158,9 @@ public class SaldoActivity extends Activity {
         if (savedInstanceState != null) {
             if (savedInstanceState.getBoolean(STATE_CARDINFO_SHOWING)) {
                 showCardInfoDialog();
+            }
+            if (savedInstanceState.getBoolean(STATE_SETTINGS_SHOWING)) {
+                showSettingsDialog();
             }
         }
     }
@@ -163,7 +174,9 @@ public class SaldoActivity extends Activity {
     private void updateDisplay() {
         balanceView.setText(preferenceManager.getSavedBalance());
 
-        String savedBalanceDate = preferenceManager.getSavedBalanceDate();
+        long date = preferenceManager.getSavedBalanceDate();
+        String savedBalanceDate = date == 0l ? null : preferenceManager.formatDate(date);
+        ;
         if (savedBalanceDate != null) {
             dateTimeView.setText(getResources().getString(R.string.datetime_text, savedBalanceDate));
         }
@@ -175,7 +188,7 @@ public class SaldoActivity extends Activity {
             prevDateTimeView.setText(getResources().getString(R.string.datetime_prev_text, savedPrevBalanceDate));
             prevBalanceTextView.setText(getResources().getString(R.string.prev_saldo_text));
             try {
-                float diff = Float.parseFloat(preferenceManager.getSavedBalance()) - Float.parseFloat(savedPrevBalance);
+                float diff = preferenceManager.getBalance() - Float.parseFloat(savedPrevBalance);
                 DecimalFormat format = new DecimalFormat("#.00");
                 diffView.setText("" + format.format(diff));
             } catch (NumberFormatException e) {
