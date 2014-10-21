@@ -2,4 +2,6 @@
 Kantinesaldo android app
 ========================
 
-This app shows the remaining balance on your canteen payment card
+You can find this app on [Google Play](https://play.google.com/store/apps/details?id=com.kwc.kantinesaldo)
+
+This app shows the remaining balance on your canteen payment card.
