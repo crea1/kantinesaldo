@@ -2,7 +2,6 @@ package com.kwc.kantinesaldo;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -14,22 +13,20 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.util.Date;
-import java.util.Locale;
 
+
+/**
+ * This is the main activity showing the balance etc.
+ *
+ * @author Marius Kristensen
+ */
 public class SaldoActivity extends Activity {
 
     private static final String TAG = "kantinesaldo";
-    private static final String PREF_CARD_NUMBER = "card_number";
-    private static final String PREF_CARD_PIN = "card_pin";
-    private static final String PREF_BALANCE = "balance";
-    private static final String PREF_BALANCE_DATE = "balance_date";
-    private static final String PREF_PREV_BALANCE = "prev_balance";
-    private static final String PREF_PREV_BALANCE_DATE = "prev_balance_date";
-    private static final String PREF_SERVICE_STATE = "service_state";
     private static final String STATE_CARDINFO_SHOWING = "cardinfo_showing";
+    private static final String STATE_SETTINGS_SHOWING = "settings_showing";
     private TextView balanceView;
     private TextView dateTimeView;
     private TextView prevBalanceView;
@@ -37,13 +34,14 @@ public class SaldoActivity extends Activity {
     private TextView prevDateTimeView;
     private TextView diffView;
     private Button updateButton;
-    private SharedPreferences prefs;
     private CardInfoDialogFragment cardInfoDialogFragment;
+    protected PreferenceManager preferenceManager;
+    private SettingsFragment settingsFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        prefs = getSharedPreferences("kantinesaldo", MODE_PRIVATE);
+        preferenceManager = new PreferenceManager(getSharedPreferences("kantinesaldo", MODE_PRIVATE), getResources().getConfiguration().locale);
         setContentView(R.layout.main);
 
         balanceView = (TextView) findViewById(R.id.balanceView);
@@ -65,21 +63,18 @@ public class SaldoActivity extends Activity {
 
                 if (isCardInfoSet()) {
                     if (isNetworkAvailable()) {
-                        HttpGetBalance httpGetBalance = new HttpGetBalance(getApplicationContext(), getSavedCardNumber(), getSavedPin()) {
+                        HttpGetBalance httpGetBalance = new HttpGetBalance(getApplicationContext(), preferenceManager.getSavedCardNumber(), preferenceManager.getSavedPin()) {
 
                             @Override
                             public void onResult(String balance) {
                                 if (balance != null) {
-                                    DateFormat balanceDate = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, Locale.UK);
-                                    String balanceDates = balanceDate.format(new Date());
-
-                                    if (!balance.equals(getSavedBalance())) {
-                                        savePreference(PREF_PREV_BALANCE, getSavedBalance());
-                                        savePreference(PREF_PREV_BALANCE_DATE, getSavedBalanceDate());
-                                        savePreference(PREF_BALANCE, balance);
+                                    if (!balance.equals(preferenceManager.getSavedBalance())) {
+                                        preferenceManager.setSavedPrevBalance(preferenceManager.getSavedBalance());
+                                        preferenceManager.setSavedPrevBalanceDate(preferenceManager.getSavedBalanceDate());
+                                        preferenceManager.setSavedBalance(balance);
 
                                     }
-                                    savePreference(PREF_BALANCE_DATE, balanceDates);
+                                    preferenceManager.setSavedBalanceDate(new Date().getTime());
                                     updateDisplay();
 
                                 }
@@ -107,29 +102,30 @@ public class SaldoActivity extends Activity {
     }
 
     private boolean isCardInfoSet() {
-        String cardNumber = getSavedCardNumber();
-        String pin = getSavedPin();
+        String cardNumber = preferenceManager.getSavedCardNumber();
+        String pin = preferenceManager.getSavedPin();
         return cardNumber != null && !cardNumber.isEmpty() && pin != null && !pin.isEmpty();
     }
 
     private void showCardInfoDialog() {
-        cardInfoDialogFragment = new CardInfoDialogFragment(getSavedCardNumber(), getSavedPin(), getSavedServiceState()) {
+        cardInfoDialogFragment = new CardInfoDialogFragment(preferenceManager.getSavedCardNumber(), preferenceManager.getSavedPin()) {
 
             @Override
-            protected void saveSettings(String cardNumber, String pin, boolean isServiceActive) {
-                savePreference(PREF_CARD_NUMBER, cardNumber);
-                savePreference(PREF_CARD_PIN, pin);
-                if (isCardInfoSet()) {
-                    savePreference(PREF_SERVICE_STATE, isServiceActive);
-                } else {
-                    savePreference(PREF_SERVICE_STATE, false);
-                }
-                BalanceDownloadReceiver.scheduleAlarms(SaldoActivity.this, getSavedServiceState());
+            protected void saveSettings(String cardNumber, String pin) {
+                preferenceManager.setSavedCardNumber(cardNumber);
+                preferenceManager.setPin(pin);
             }
 
         };
         cardInfoDialogFragment.show(getFragmentManager(), TAG);
     }
+
+
+    private void showSettingsDialog() {
+        settingsFragment = new SettingsFragment(preferenceManager);
+        settingsFragment.show(getFragmentManager(), TAG);
+    }
+
 
 
     @Override
@@ -141,19 +137,18 @@ public class SaldoActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_settings) {
+        if (item.getItemId() == R.id.menu_card_settings) {
             showCardInfoDialog();
+        } else if (item.getItemId() == R.id.menu_settings) {
+            showSettingsDialog();
         }
         return true;
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        if (cardInfoDialogFragment != null && cardInfoDialogFragment.getDialog() != null) {
-            outState.putBoolean(STATE_CARDINFO_SHOWING, true);
-        } else {
-            outState.putBoolean(STATE_CARDINFO_SHOWING, false);
-        }
+        outState.putBoolean(STATE_CARDINFO_SHOWING, cardInfoDialogFragment != null && cardInfoDialogFragment.getDialog() != null);
+        outState.putBoolean(STATE_SETTINGS_SHOWING, settingsFragment != null && settingsFragment.getActivity() != null);
         super.onSaveInstanceState(outState);
     }
 
@@ -163,6 +158,9 @@ public class SaldoActivity extends Activity {
         if (savedInstanceState != null) {
             if (savedInstanceState.getBoolean(STATE_CARDINFO_SHOWING)) {
                 showCardInfoDialog();
+            }
+            if (savedInstanceState.getBoolean(STATE_SETTINGS_SHOWING)) {
+                showSettingsDialog();
             }
         }
     }
@@ -174,21 +172,23 @@ public class SaldoActivity extends Activity {
     }
 
     private void updateDisplay() {
-        balanceView.setText(getSavedBalance());
+        balanceView.setText(preferenceManager.getSavedBalance());
 
-        String savedBalanceDate = getSavedBalanceDate();
+        long date = preferenceManager.getSavedBalanceDate();
+        String savedBalanceDate = date == 0l ? null : preferenceManager.formatDate(date);
+        ;
         if (savedBalanceDate != null) {
             dateTimeView.setText(getResources().getString(R.string.datetime_text, savedBalanceDate));
         }
 
-        String savedPrevBalance = getSavedPrevBalance();
+        String savedPrevBalance = preferenceManager.getSavedPrevBalance();
         if (savedPrevBalance != null) {
             prevBalanceView.setText(savedPrevBalance);
-            String savedPrevBalanceDate = getSavedPrevBalanceDate();
+            String savedPrevBalanceDate = preferenceManager.getSavedPrevBalanceDate();
             prevDateTimeView.setText(getResources().getString(R.string.datetime_prev_text, savedPrevBalanceDate));
             prevBalanceTextView.setText(getResources().getString(R.string.prev_saldo_text));
             try {
-                float diff = Float.parseFloat(getSavedBalance()) - Float.parseFloat(savedPrevBalance);
+                float diff = preferenceManager.getBalance() - Float.parseFloat(savedPrevBalance);
                 DecimalFormat format = new DecimalFormat("#.00");
                 diffView.setText("" + format.format(diff));
             } catch (NumberFormatException e) {
@@ -197,43 +197,4 @@ public class SaldoActivity extends Activity {
         }
     }
 
-    private void savePreference(String key, String value) {
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(key, value);
-        editor.commit();
-    }
-
-    private void savePreference(String key, boolean value) {
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(key, value);
-        editor.commit();
-    }
-
-    private String getSavedPin() {
-        return prefs.getString(PREF_CARD_PIN, null);
-    }
-
-    private String getSavedCardNumber() {
-        return prefs.getString(PREF_CARD_NUMBER, null);
-    }
-
-    private String getSavedBalance() {
-        return prefs.getString(PREF_BALANCE, null);
-    }
-
-    private String getSavedBalanceDate() {
-        return prefs.getString(PREF_BALANCE_DATE, null);
-    }
-
-    private String getSavedPrevBalance() {
-        return prefs.getString(PREF_PREV_BALANCE, null);
-    }
-
-    private String getSavedPrevBalanceDate() {
-        return prefs.getString(PREF_PREV_BALANCE_DATE, null);
-    }
-
-    private boolean getSavedServiceState() {
-        return prefs.getBoolean(PREF_SERVICE_STATE, false);
-    }
 }
